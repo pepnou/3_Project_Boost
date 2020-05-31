@@ -8,6 +8,9 @@ public class Rocket : MonoBehaviour
     private Rigidbody rigidBody;
     private AudioSource audioSource;
 
+    [SerializeField] float rcsThrust = 150f;
+    [SerializeField] float mainThrust = 150f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +34,7 @@ private void Thrust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+            rigidBody.AddRelativeForce(Vector3.up * Time.deltaTime * mainThrust);
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
@@ -50,15 +53,16 @@ private void Thrust()
         if (left ^ right)
         {
             rigidBody.angularVelocity = Vector3.zero;
+            float rotationThisTurn = Time.deltaTime * rcsThrust;
 
             if (left)
             {
-                transform.Rotate(Vector3.forward);
+                transform.Rotate(Vector3.forward * rotationThisTurn);
             }
 
             if (right)
             {
-                transform.Rotate(-Vector3.forward);
+                transform.Rotate(-Vector3.forward * rotationThisTurn);
             }
         }
     }
