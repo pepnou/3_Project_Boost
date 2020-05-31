@@ -30,7 +30,7 @@ public class Rocket : MonoBehaviour
         Rotate();
     }
 
-private void Thrust()
+    private void Thrust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
@@ -64,6 +64,23 @@ private void Thrust()
             {
                 transform.Rotate(-Vector3.forward * rotationThisTurn);
             }
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        /*foreach (ContactPoint contact in collision.contacts)
+        {
+            Debug.DrawRay(contact.point, contact.normal, Color.white, 1f);
+        }*/
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                print("ok");
+                break;
+            default:
+                print("dead");
+                break;
         }
     }
 }
