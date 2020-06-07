@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
@@ -10,6 +8,9 @@ public class Rocket : MonoBehaviour
 
     [SerializeField] float rcsThrust = 150f;
     [SerializeField] float mainThrust = 150f;
+
+    enum State { ALIVE, DYING, TRANSCANDING};
+    private State state = State.ALIVE;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +22,10 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ProcessInput();
+        if (state == State.ALIVE)
+        {
+            ProcessInput();
+        }
     }
 
     private void ProcessInput()
@@ -69,18 +73,29 @@ public class Rocket : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        /*foreach (ContactPoint contact in collision.contacts)
-        {
-            Debug.DrawRay(contact.point, contact.normal, Color.white, 1f);
-        }*/
+        if(state != State.ALIVE) { return;}
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
-                print("ok");
+                break;
+            case "Finish":
+                state = State.TRANSCANDING;
+                Invoke("LoadNextScene", 1f);
                 break;
             default:
-                print("dead");
+                state = State.DYING;
+                Invoke("LoadFirstScene", 1f);
                 break;
         }
+    }
+
+    private void LoadNextScene()
+    {
+        SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings);
+    }
+    private void LoadFirstScene()
+    {
+        SceneManager.LoadScene(0);
     }
 }
